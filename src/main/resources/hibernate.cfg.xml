@@ -9,7 +9,7 @@
         </property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="connection.username">AndreySemenov</property>
-        <property name="connection.password">KBS876823u078!</property>
+        <property name="connection.password">password</property>
         <property name="hibernate.show_sql">true</property>
 
         <property name="current_session_context_class">thread</property>
