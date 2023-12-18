@@ -44,9 +44,11 @@ public class TransactionsByDateHandler implements HttpHandler {
     private void handleGetTransactionsByDate(HttpExchange exchange) throws IOException {
         List<TransactionByDate> transactionsByDate = TRANSACTION_BY_DATE_SERVICE.getAllTransactionsByDate();
         List<TransactionByDateDTO> transactionByDateDTOList = new ArrayList<>();
+
         for (TransactionByDate transactionByDate : transactionsByDate) {
             transactionByDateDTOList.add(transactionByDate.toTransactionByDateDTO());
         }
+
         String response = transactionByDateDTOList.toString();
         sendResponse(exchange, response);
     }
@@ -54,6 +56,7 @@ public class TransactionsByDateHandler implements HttpHandler {
     private void handleGetTransactionByDateById(HttpExchange exchange, String transactionByDateId) throws IOException {
         int id = Integer.parseInt(transactionByDateId);
         TransactionByDate transactionByDate = TRANSACTION_BY_DATE_SERVICE.getTransactionByDateById(id);
+
         String response;
         if (transactionByDate != null) {
             response = transactionByDate.toString();

@@ -34,6 +34,7 @@ public class BankAccountTypesHandler implements HttpHandler {
 
     private void handleGetBankAccountTypes(HttpExchange exchange) throws  IOException {
         List<BankAccountType> bankAccountTypes = BANK_ACCOUNT_TYPE_SERVICE.getAllBankAccountTypes();
+
         String response = bankAccountTypes.toString();
         sendResponse(exchange, response);
     }
@@ -41,6 +42,7 @@ public class BankAccountTypesHandler implements HttpHandler {
     private void handleGetBankAccountTypeById(HttpExchange exchange, String bankAccountTypeId) throws IOException {
         int id = Integer.parseInt(bankAccountTypeId);
         BankAccountType bankAccountType = BANK_ACCOUNT_TYPE_SERVICE.getBankAccountTypeById(id);
+
         String response;
         if (bankAccountType != null) {
             response = bankAccountType.toString();
@@ -53,6 +55,7 @@ public class BankAccountTypesHandler implements HttpHandler {
 
     private void sendResponse(HttpExchange exchange, String response) throws IOException {
         exchange.sendResponseHeaders(200, response.length());
+
         try (OutputStream outputStream = exchange.getResponseBody()) {
             outputStream.write(response.getBytes());
         } catch (Exception e) {

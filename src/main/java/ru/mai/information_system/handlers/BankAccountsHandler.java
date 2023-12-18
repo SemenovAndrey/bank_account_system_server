@@ -44,9 +44,11 @@ public class BankAccountsHandler implements HttpHandler {
     private void handleGetBankAccounts(HttpExchange exchange) throws IOException {
         List<BankAccount> bankAccounts = BANK_ACCOUNT_SERVICE.getAllBankAccounts();
         List<BankAccountDTO> bankAccountDTOList = new ArrayList<>();
+
         for (BankAccount bankAccount : bankAccounts) {
             bankAccountDTOList.add(bankAccount.toBankAccountDTO());
         }
+
         String response = bankAccountDTOList.toString();
         sendResponse(exchange, response);
     }
@@ -54,6 +56,7 @@ public class BankAccountsHandler implements HttpHandler {
     private void handleGetBankAccountById(HttpExchange exchange, String bankAccountId) throws IOException {
         int id = Integer.parseInt(bankAccountId);
         BankAccount bankAccount = BANK_ACCOUNT_SERVICE.getBankAccountById(id);
+
         String response;
         if (bankAccount != null) {
             response = bankAccount.toString();
@@ -69,6 +72,7 @@ public class BankAccountsHandler implements HttpHandler {
         BankAccountDTO bankAccountDTO = GSON.fromJson(requestBody, BankAccountDTO.class);
         BankAccount bankAccountFromDB = BANK_ACCOUNT_SERVICE
                 .getBankAccountByNameAndUserId(bankAccountDTO.getUserId(), bankAccountDTO.getName());
+
         String response;
         if (bankAccountFromDB == null) {
             BankAccount bankAccount = bankAccountDTO.toBankAccountEntity();
@@ -85,6 +89,7 @@ public class BankAccountsHandler implements HttpHandler {
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         BankAccountDTO bankAccountDTO = GSON.fromJson(requestBody, BankAccountDTO.class);
         BankAccount bankAccountFromDB = BANK_ACCOUNT_SERVICE.getBankAccountById(bankAccountDTO.getId());
+
         String response;
         if (bankAccountFromDB == null) {
             response = "Bank account not found";
@@ -100,6 +105,7 @@ public class BankAccountsHandler implements HttpHandler {
     private void handleDeleteBankAccount(HttpExchange exchange, String bankAccountId) throws IOException {
         int id = Integer.parseInt(bankAccountId);
         BankAccount bankAccount = BANK_ACCOUNT_SERVICE.getBankAccountById(id);
+
         String response;
         if (bankAccount == null) {
             response = "Bank account not found";

@@ -46,6 +46,7 @@ public class SupportHandler implements HttpHandler {
     private void handleGetSupportById(HttpExchange exchange, String supportId) throws IOException {
         int id = Integer.parseInt(supportId);
         Support support = SUPPORT_SERVICE.getSupportById(id);
+
         String response;
         if (support != null) {
             response = support.toString();
@@ -60,6 +61,7 @@ public class SupportHandler implements HttpHandler {
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Support support = GSON.fromJson(requestBody, Support.class);
         SUPPORT_SERVICE.saveSupport(support);
+
         String response = "Support message added successfully";
         sendResponse(exchange, response);
     }
@@ -67,6 +69,7 @@ public class SupportHandler implements HttpHandler {
     private void handleDeleteSupport(HttpExchange exchange, String supportId) throws IOException {
         int id = Integer.parseInt(supportId);
         Support support = SUPPORT_SERVICE.getSupportById(id);
+
         String response;
         if (support == null) {
             response = "Support message not found";
@@ -80,6 +83,7 @@ public class SupportHandler implements HttpHandler {
 
     private void sendResponse(HttpExchange exchange, String response) throws IOException {
         exchange.sendResponseHeaders(200, response.length());
+
         try (OutputStream outputStream = exchange.getResponseBody()) {
             outputStream.write(response.getBytes());
         } catch (Exception e) {

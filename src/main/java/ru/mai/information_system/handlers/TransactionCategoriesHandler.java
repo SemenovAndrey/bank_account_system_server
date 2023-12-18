@@ -44,9 +44,11 @@ public class TransactionCategoriesHandler implements HttpHandler {
     private void handleGetTransactionCategories(HttpExchange exchange) throws IOException {
         List<TransactionCategory> transactionCategories = TRANSACTION_CATEGORY_SERVICE.getAllTransactionCategories();
         List<TransactionCategoryDTO> transactionCategoryDTOList = new ArrayList<>();
+
         for (TransactionCategory transactionCategory : transactionCategories) {
             transactionCategoryDTOList.add(transactionCategory.transactionCategoryDTO());
         }
+
         String response = transactionCategoryDTOList.toString();
         sendResponse(exchange, response);
     }
@@ -54,6 +56,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
     private void handleGetTransactionCategoryById(HttpExchange exchange, String transactionCategoryId) throws IOException {
         int id = Integer.parseInt(transactionCategoryId);
         TransactionCategory transactionCategory = TRANSACTION_CATEGORY_SERVICE.getTransactionCategoryById(id);
+
         String response;
         if (transactionCategory != null) {
             response = transactionCategory.toString();
@@ -70,6 +73,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
         TransactionCategory transactionCategoryFromDB = TRANSACTION_CATEGORY_SERVICE
                 .getTransactionCategoryByUserIdAndCategory(transactionCategoryDTO.getUserId(),
                                                             transactionCategoryDTO.getCategory());
+
         String response;
         if (transactionCategoryFromDB == null) {
             TransactionCategory transactionCategory = transactionCategoryDTO.toTransactionCategoryEntity();
@@ -87,6 +91,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
         TransactionCategoryDTO transactionCategoryDTO = GSON.fromJson(requestBody, TransactionCategoryDTO.class);
         TransactionCategory transactionCategoryFromDB = TRANSACTION_CATEGORY_SERVICE
                 .getTransactionCategoryById(transactionCategoryDTO.getId());
+
         String response;
         if (transactionCategoryFromDB == null) {
             response = "Transaction category not found";
@@ -102,6 +107,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
     private void handleDeleteTransactionCategory(HttpExchange exchange, String transactionCategoryId) throws IOException {
         int id = Integer.parseInt(transactionCategoryId);
         TransactionCategory transactionCategory = TRANSACTION_CATEGORY_SERVICE.getTransactionCategoryById(id);
+
         String response;
         if (transactionCategory == null) {
             response = "Transaction category not found";

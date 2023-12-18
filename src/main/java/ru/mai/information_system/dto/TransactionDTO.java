@@ -25,7 +25,7 @@ public class TransactionDTO {
     }
 
     public TransactionDTO(int id, int bankAccountId, double amount,
-                                int transactionCategoryId,String transactionDate, String comment) {
+                                int transactionCategoryId, String transactionDate, String comment) {
         this.id = id;
         this.bankAccountId = bankAccountId;
         this.amount = amount;

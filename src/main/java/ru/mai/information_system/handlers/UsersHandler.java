@@ -48,6 +48,7 @@ public class UsersHandler implements HttpHandler {
     private void handleGetUserById(HttpExchange exchange, String userId) throws IOException {
         int id = Integer.parseInt(userId);
         User user = USER_SERVICE.getUserById(id);
+
         String response;
         if (user != null) {
             response = user.toString();
@@ -62,6 +63,7 @@ public class UsersHandler implements HttpHandler {
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         User user = GSON.fromJson(requestBody, User.class);
         User userFromDB = USER_SERVICE.getUserByEmail(user.getEmail());
+
         String response;
         if (userFromDB == null) {
             USER_SERVICE.saveUser(user);
@@ -77,6 +79,7 @@ public class UsersHandler implements HttpHandler {
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         User user = GSON.fromJson(requestBody, User.class);
         User userFromDB = USER_SERVICE.getUserById(user.getId());
+
         String response;
         if (userFromDB == null) {
             response = "User not found";
@@ -91,6 +94,7 @@ public class UsersHandler implements HttpHandler {
     private void handleDeleteUser(HttpExchange exchange, String userId) throws IOException {
         int id = Integer.parseInt(userId);
         User user = USER_SERVICE.getUserById(id);
+
         String response;
         if (user == null) {
             response = "User not found";
@@ -104,6 +108,7 @@ public class UsersHandler implements HttpHandler {
 
     private void sendResponse(HttpExchange exchange, String response) throws IOException {
         exchange.sendResponseHeaders(200, response.length());
+
         try (OutputStream outputStream = exchange.getResponseBody()) {
             outputStream.write(response.getBytes());
         } catch (Exception e) {

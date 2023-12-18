@@ -44,9 +44,11 @@ public class TransactionsHandler implements HttpHandler {
     private void handleGetTransactions(HttpExchange exchange) throws IOException {
         List<Transaction> transactions = TRANSACTION_SERVICE.getAllTransactions();
         List<TransactionDTO> transactionDTOList = new ArrayList<>();
+
         for (Transaction transaction : transactions) {
             transactionDTOList.add(transaction.toTransactionDTO());
         }
+
         String response = transactionDTOList.toString();
         sendResponse(exchange, response);
     }
@@ -54,6 +56,7 @@ public class TransactionsHandler implements HttpHandler {
     private void handleGetTransactionById(HttpExchange exchange, String transactionId) throws IOException {
         int id = Integer.parseInt(transactionId);
         Transaction transaction = TRANSACTION_SERVICE.getTransactionById(id);
+
         String response;
         if (transaction != null) {
             response = transaction.toString();
@@ -78,6 +81,7 @@ public class TransactionsHandler implements HttpHandler {
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         TransactionDTO transactionDTO = GSON.fromJson(requestBody, TransactionDTO.class);
         Transaction transactionFromDB = TRANSACTION_SERVICE.getTransactionById(transactionDTO.getId());
+
         String response;
         if (transactionFromDB == null) {
             response = "Transaction not found";
@@ -93,6 +97,7 @@ public class TransactionsHandler implements HttpHandler {
     private void handleDeleteTransaction(HttpExchange exchange, String transactionId) throws IOException {
         int id = Integer.parseInt(transactionId);
         Transaction transaction = TRANSACTION_SERVICE.getTransactionById(id);
+
         String response;
         if (transaction == null) {
             response = "Transaction not found";
