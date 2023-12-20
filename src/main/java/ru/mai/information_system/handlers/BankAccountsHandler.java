@@ -10,6 +10,7 @@ import ru.mai.information_system.service.BankAccountServiceImpl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class BankAccountsHandler implements HttpHandler {
     }
 
     private void sendResponse(HttpExchange exchange, String response) throws IOException {
-        byte[] responseBytes = response.getBytes("UTF-8");
+        byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(200, responseBytes.length);
 
         try (OutputStream outputStream = exchange.getResponseBody()) {

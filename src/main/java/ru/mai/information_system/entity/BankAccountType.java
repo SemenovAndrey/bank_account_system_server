@@ -59,7 +59,6 @@ public class BankAccountType {
         return "BankAccountType{" +
                 "id=" + id +
                 ", type='" + type + '\'' +
-                ", bankAccountList=" + bankAccountList +
                 '}';
     }
 }

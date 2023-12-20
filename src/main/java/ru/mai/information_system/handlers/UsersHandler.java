@@ -26,6 +26,9 @@ public class UsersHandler implements HttpHandler {
         } else if (path.startsWith(localPath + "/") && path.split("/").length == 3
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetUserById(exchange, path.split("/")[2]);
+        } else if (path.startsWith(localPath + "/email") && path.split("/").length == 4
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetUserByEmail(exchange, path.split("/")[3]);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("POST")) {
             handleAddUser(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
@@ -48,6 +51,19 @@ public class UsersHandler implements HttpHandler {
     private void handleGetUserById(HttpExchange exchange, String userId) throws IOException {
         int id = Integer.parseInt(userId);
         User user = USER_SERVICE.getUserById(id);
+
+        String response;
+        if (user != null) {
+            response = user.toString();
+        } else {
+            response = "User not found";
+        }
+
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetUserByEmail(HttpExchange exchange, String email) throws IOException {
+        User user = USER_SERVICE.getUserByEmail(email);
 
         String response;
         if (user != null) {
