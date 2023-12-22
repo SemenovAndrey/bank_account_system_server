@@ -14,13 +14,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.mai.information_system.handlers.ResponseSender.sendResponseForDTO;
+
 public class TransactionsByDateHandler implements HttpHandler {
 
     private final TransactionByDateService TRANSACTION_BY_DATE_SERVICE = new TransactionByDateServiceImpl();
     private final Gson GSON = new Gson();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String localPath = "/transaction_categories";
 
@@ -37,12 +39,16 @@ public class TransactionsByDateHandler implements HttpHandler {
                 && exchange.getRequestMethod().equals("DELETE")) {
             handleDeleteTransactionByDate(exchange, path.split("/")[2]);
         } else {
-            exchange.sendResponseHeaders(404, 0);
+            try {
+                exchange.sendResponseHeaders(404, 0);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
             exchange.close();
         }
     }
 
-    private void handleGetTransactionsByDate(HttpExchange exchange) throws IOException {
+    private void handleGetTransactionsByDate(HttpExchange exchange) {
         List<TransactionByDate> transactionsByDate = TRANSACTION_BY_DATE_SERVICE.getAllTransactionsByDate();
         List<TransactionByDateDTO> transactionByDateDTOList = new ArrayList<>();
 
@@ -51,10 +57,10 @@ public class TransactionsByDateHandler implements HttpHandler {
         }
 
         String response = transactionByDateDTOList.toString();
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleGetTransactionByDateById(HttpExchange exchange, String transactionByDateId) throws IOException {
+    private void handleGetTransactionByDateById(HttpExchange exchange, String transactionByDateId) {
         int id = Integer.parseInt(transactionByDateId);
         TransactionByDate transactionByDate = TRANSACTION_BY_DATE_SERVICE.getTransactionByDateById(id);
 
@@ -65,36 +71,52 @@ public class TransactionsByDateHandler implements HttpHandler {
             response = "Transaction by date not found";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleAddTransactionByDate(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        TransactionByDateDTO transactionByDateDTO = GSON.fromJson(requestBody, TransactionByDateDTO.class);
-        TransactionByDate transactionByDate = transactionByDateDTO.toTransactionByDateEntity();
-        TRANSACTION_BY_DATE_SERVICE.saveTransactionByDate(transactionByDate);
-        String response = "Transaction by date added successfully";
-
-        sendResponse(exchange, response);
-    }
-
-    private void handleUpdateTransactionByDate(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        TransactionByDateDTO transactionByDateDTO = GSON.fromJson(requestBody, TransactionByDateDTO.class);
-        TransactionByDate transactionByDateFromDB = TRANSACTION_BY_DATE_SERVICE.getTransactionByDateById(transactionByDateDTO.getId());
+    private void handleAddTransactionByDate(HttpExchange exchange) {
+        String requestBody;
         String response;
-        if (transactionByDateFromDB == null) {
-            response = "Transaction by date not found";
-        } else {
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            TransactionByDateDTO transactionByDateDTO = GSON.fromJson(requestBody, TransactionByDateDTO.class);
             TransactionByDate transactionByDate = transactionByDateDTO.toTransactionByDateEntity();
             TRANSACTION_BY_DATE_SERVICE.saveTransactionByDate(transactionByDate);
-            response = "Transaction by date updated successfully";
+            response = "Transaction by date added successfully";
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleDeleteTransactionByDate(HttpExchange exchange, String transactionByDateId) throws IOException {
+    private void handleUpdateTransactionByDate(HttpExchange exchange) {
+        String requestBody;
+        String response;
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            TransactionByDateDTO transactionByDateDTO = GSON.fromJson(requestBody, TransactionByDateDTO.class);
+            TransactionByDate transactionByDateFromDB = TRANSACTION_BY_DATE_SERVICE
+                    .getTransactionByDateById(transactionByDateDTO.getId());
+            if (transactionByDateFromDB == null) {
+                response = "Transaction by date not found";
+            } else {
+                TransactionByDate transactionByDate = transactionByDateDTO.toTransactionByDateEntity();
+                TRANSACTION_BY_DATE_SERVICE.saveTransactionByDate(transactionByDate);
+                response = "Transaction by date updated successfully";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
+        }
+
+        sendResponseForDTO(exchange, response);
+    }
+
+    private void handleDeleteTransactionByDate(HttpExchange exchange, String transactionByDateId) {
         int id = Integer.parseInt(transactionByDateId);
         TransactionByDate transactionByDate = TRANSACTION_BY_DATE_SERVICE.getTransactionByDateById(id);
         String response;
@@ -105,18 +127,6 @@ public class TransactionsByDateHandler implements HttpHandler {
             response = "Transaction by date deleted successfully";
         }
 
-        sendResponse(exchange, response);
-    }
-
-    private void sendResponse(HttpExchange exchange, String response) throws IOException {
-        byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
-        exchange.sendResponseHeaders(200, responseBytes.length);
-
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(responseBytes);
-        } catch (Exception e) {
-            System.err.println("Error");
-            System.out.println(e.getMessage());
-        }
+        sendResponseForDTO(exchange, response);
     }
 }

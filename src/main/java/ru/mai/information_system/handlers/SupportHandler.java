@@ -8,8 +8,9 @@ import ru.mai.information_system.service.SupportService;
 import ru.mai.information_system.service.SupportServiceImpl;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
+
+import static ru.mai.information_system.handlers.ResponseSender.sendResponse;
 
 public class SupportHandler implements HttpHandler {
 
@@ -17,7 +18,7 @@ public class SupportHandler implements HttpHandler {
     private final Gson GSON = new Gson();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String localPath = "/support";
 
@@ -32,18 +33,22 @@ public class SupportHandler implements HttpHandler {
                 && exchange.getRequestMethod().equals("DELETE")) {
             handleDeleteSupport(exchange, path.split("/")[2]);
         } else {
-            exchange.sendResponseHeaders(404, 0);
+            try {
+                exchange.sendResponseHeaders(404, 0);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
             exchange.close();
         }
     }
 
-    private void handleGetSupports(HttpExchange exchange) throws IOException {
+    private void handleGetSupports(HttpExchange exchange) {
         List<Support> supports = SUPPORT_SERVICE.getAllSupports();
         String response = supports.toString();
         sendResponse(exchange, response);
     }
 
-    private void handleGetSupportById(HttpExchange exchange, String supportId) throws IOException {
+    private void handleGetSupportById(HttpExchange exchange, String supportId) {
         int id = Integer.parseInt(supportId);
         Support support = SUPPORT_SERVICE.getSupportById(id);
 
@@ -57,16 +62,23 @@ public class SupportHandler implements HttpHandler {
         sendResponse(exchange, response);
     }
 
-    private void handleAddSupport(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        Support support = GSON.fromJson(requestBody, Support.class);
-        SUPPORT_SERVICE.saveSupport(support);
+    private void handleAddSupport(HttpExchange exchange) {
+        String requestBody;
+        String response;
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            Support support = GSON.fromJson(requestBody, Support.class);
+            SUPPORT_SERVICE.saveSupport(support);
+            response = "Support message added successfully";
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
+        }
 
-        String response = "Support message added successfully";
         sendResponse(exchange, response);
     }
 
-    private void handleDeleteSupport(HttpExchange exchange, String supportId) throws IOException {
+    private void handleDeleteSupport(HttpExchange exchange, String supportId) {
         int id = Integer.parseInt(supportId);
         Support support = SUPPORT_SERVICE.getSupportById(id);
 
@@ -79,16 +91,5 @@ public class SupportHandler implements HttpHandler {
         }
 
         sendResponse(exchange, response);
-    }
-
-    private void sendResponse(HttpExchange exchange, String response) throws IOException {
-        exchange.sendResponseHeaders(200, response.length());
-
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(response.getBytes());
-        } catch (Exception e) {
-            System.err.println("Error");
-            System.out.println(e.getMessage());
-        }
     }
 }

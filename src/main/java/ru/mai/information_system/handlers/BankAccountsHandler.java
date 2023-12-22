@@ -9,10 +9,10 @@ import ru.mai.information_system.service.BankAccountService;
 import ru.mai.information_system.service.BankAccountServiceImpl;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ru.mai.information_system.handlers.ResponseSender.sendResponseForDTO;
 
 public class BankAccountsHandler implements HttpHandler {
 
@@ -20,7 +20,7 @@ public class BankAccountsHandler implements HttpHandler {
     private final Gson GSON = new Gson();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String localPath = "/bank_accounts";
 
@@ -37,12 +37,16 @@ public class BankAccountsHandler implements HttpHandler {
                 && exchange.getRequestMethod().equals("DELETE")) {
             handleDeleteBankAccount(exchange, path.split("/")[2]);
         } else {
-            exchange.sendResponseHeaders(404, 0);
+            try {
+                exchange.sendResponseHeaders(404, 0);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
             exchange.close();
         }
     }
 
-    private void handleGetBankAccounts(HttpExchange exchange) throws IOException {
+    private void handleGetBankAccounts(HttpExchange exchange) {
         List<BankAccount> bankAccounts = BANK_ACCOUNT_SERVICE.getAllBankAccounts();
         List<BankAccountDTO> bankAccountDTOList = new ArrayList<>();
 
@@ -51,10 +55,10 @@ public class BankAccountsHandler implements HttpHandler {
         }
 
         String response = bankAccountDTOList.toString();
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleGetBankAccountById(HttpExchange exchange, String bankAccountId) throws IOException {
+    private void handleGetBankAccountById(HttpExchange exchange, String bankAccountId) {
         int id = Integer.parseInt(bankAccountId);
         BankAccount bankAccount = BANK_ACCOUNT_SERVICE.getBankAccountById(id);
 
@@ -65,45 +69,59 @@ public class BankAccountsHandler implements HttpHandler {
             response = "Bank account not found";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleAddBankAccount(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        BankAccountDTO bankAccountDTO = GSON.fromJson(requestBody, BankAccountDTO.class);
-        BankAccount bankAccountFromDB = BANK_ACCOUNT_SERVICE
-                .getBankAccountByNameAndUserId(bankAccountDTO.getUserId(), bankAccountDTO.getName());
-
+    private void handleAddBankAccount(HttpExchange exchange) {
+        String requestBody;
         String response;
-        if (bankAccountFromDB == null) {
-            BankAccount bankAccount = bankAccountDTO.toBankAccountEntity();
-            BANK_ACCOUNT_SERVICE.saveBankAccount(bankAccount);
-            response = "Bank account added successfully";
-        } else {
-            response = "Bank account with this name already created";
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            BankAccountDTO bankAccountDTO = GSON.fromJson(requestBody, BankAccountDTO.class);
+            BankAccount bankAccountFromDB = BANK_ACCOUNT_SERVICE
+                    .getBankAccountByNameAndUserId(bankAccountDTO.getUserId(), bankAccountDTO.getName());
+
+            if (bankAccountFromDB == null) {
+                BankAccount bankAccount = bankAccountDTO.toBankAccountEntity();
+                BANK_ACCOUNT_SERVICE.saveBankAccount(bankAccount);
+                response = "Bank account added successfully";
+            } else {
+                response = "Bank account with this name already created";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleUpdateBankAccount(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        BankAccountDTO bankAccountDTO = GSON.fromJson(requestBody, BankAccountDTO.class);
-        BankAccount bankAccountFromDB = BANK_ACCOUNT_SERVICE.getBankAccountById(bankAccountDTO.getId());
-
+    private void handleUpdateBankAccount(HttpExchange exchange) {
+        String requestBody;
         String response;
-        if (bankAccountFromDB == null) {
-            response = "Bank account not found";
-        } else {
-            BankAccount bankAccount = bankAccountDTO.toBankAccountEntity();
-            BANK_ACCOUNT_SERVICE.saveBankAccount(bankAccount);
-            response = "Bank account updated successfully";
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            BankAccountDTO bankAccountDTO = GSON.fromJson(requestBody, BankAccountDTO.class);
+            BankAccount bankAccountFromDB = BANK_ACCOUNT_SERVICE.getBankAccountById(bankAccountDTO.getId());
+
+            if (bankAccountFromDB == null) {
+                response = "Bank account not found";
+            } else {
+                BankAccount bankAccount = bankAccountDTO.toBankAccountEntity();
+                BANK_ACCOUNT_SERVICE.saveBankAccount(bankAccount);
+                response = "Bank account updated successfully";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleDeleteBankAccount(HttpExchange exchange, String bankAccountId) throws IOException {
+    private void handleDeleteBankAccount(HttpExchange exchange, String bankAccountId) {
         int id = Integer.parseInt(bankAccountId);
         BankAccount bankAccount = BANK_ACCOUNT_SERVICE.getBankAccountById(id);
 
@@ -115,18 +133,6 @@ public class BankAccountsHandler implements HttpHandler {
             response = "Bank account deleted successfully";
         }
 
-        sendResponse(exchange, response);
-    }
-
-    private void sendResponse(HttpExchange exchange, String response) throws IOException {
-        byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
-        exchange.sendResponseHeaders(200, responseBytes.length);
-
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(responseBytes);
-        } catch (Exception e) {
-            System.err.println("Error");
-            System.out.println(e.getMessage());
-        }
+        sendResponseForDTO(exchange, response);
     }
 }

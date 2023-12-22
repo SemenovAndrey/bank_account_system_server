@@ -8,8 +8,9 @@ import ru.mai.information_system.service.UserService;
 import ru.mai.information_system.service.UserServiceImpl;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
+
+import static ru.mai.information_system.handlers.ResponseSender.sendResponse;
 
 public class UsersHandler implements HttpHandler {
 
@@ -17,7 +18,7 @@ public class UsersHandler implements HttpHandler {
     private final Gson GSON = new Gson();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String localPath = "/users";
 
@@ -37,18 +38,22 @@ public class UsersHandler implements HttpHandler {
                 && exchange.getRequestMethod().equals("DELETE")) {
             handleDeleteUser(exchange, path.split("/")[2]);
         } else {
-            exchange.sendResponseHeaders(404, 0);
+            try {
+                exchange.sendResponseHeaders(404, 0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             exchange.close();
         }
     }
 
-    private void handleGetUsers(HttpExchange exchange) throws IOException {
+    private void handleGetUsers(HttpExchange exchange) {
         List<User> users = USER_SERVICE.getAllUsers();
         String response = users.toString();
         sendResponse(exchange, response);
     }
 
-    private void handleGetUserById(HttpExchange exchange, String userId) throws IOException {
+    private void handleGetUserById(HttpExchange exchange, String userId) {
         int id = Integer.parseInt(userId);
         User user = USER_SERVICE.getUserById(id);
 
@@ -62,7 +67,7 @@ public class UsersHandler implements HttpHandler {
         sendResponse(exchange, response);
     }
 
-    private void handleGetUserByEmail(HttpExchange exchange, String email) throws IOException {
+    private void handleGetUserByEmail(HttpExchange exchange, String email) {
         User user = USER_SERVICE.getUserByEmail(email);
 
         String response;
@@ -75,39 +80,53 @@ public class UsersHandler implements HttpHandler {
         sendResponse(exchange, response);
     }
 
-    private void handleAddUser(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        User user = GSON.fromJson(requestBody, User.class);
-        User userFromDB = USER_SERVICE.getUserByEmail(user.getEmail());
-
+    private void handleAddUser(HttpExchange exchange) {
+        String requestBody;
         String response;
-        if (userFromDB == null) {
-            USER_SERVICE.saveUser(user);
-            response = "User added successfully";
-        } else {
-            response = "User with this email already created";
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            User user = GSON.fromJson(requestBody, User.class);
+            User userFromDB = USER_SERVICE.getUserByEmail(user.getEmail());
+
+            if (userFromDB == null) {
+                USER_SERVICE.saveUser(user);
+                response = "User added successfully";
+            } else {
+                response = "User with this email already created";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
         }
 
         sendResponse(exchange, response);
     }
 
-    private void handleUpdateUser(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        User user = GSON.fromJson(requestBody, User.class);
-        User userFromDB = USER_SERVICE.getUserById(user.getId());
-
+    private void handleUpdateUser(HttpExchange exchange) {
+        String requestBody;
         String response;
-        if (userFromDB == null) {
-            response = "User not found";
-        } else {
-            USER_SERVICE.saveUser(user);
-            response = "User successfully updated";
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            User user = GSON.fromJson(requestBody, User.class);
+            User userFromDB = USER_SERVICE.getUserById(user.getId());
+
+            if (userFromDB == null) {
+                response = "User not found";
+            } else {
+                USER_SERVICE.saveUser(user);
+                response = "User successfully updated";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
         }
 
         sendResponse(exchange, response);
     }
 
-    private void handleDeleteUser(HttpExchange exchange, String userId) throws IOException {
+    private void handleDeleteUser(HttpExchange exchange, String userId) {
         int id = Integer.parseInt(userId);
         User user = USER_SERVICE.getUserById(id);
 
@@ -120,16 +139,5 @@ public class UsersHandler implements HttpHandler {
         }
 
         sendResponse(exchange, response);
-    }
-
-    private void sendResponse(HttpExchange exchange, String response) throws IOException {
-        exchange.sendResponseHeaders(200, response.length());
-
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(response.getBytes());
-        } catch (Exception e) {
-            System.err.println("Error");
-            System.out.println(e.getMessage());
-        }
     }
 }

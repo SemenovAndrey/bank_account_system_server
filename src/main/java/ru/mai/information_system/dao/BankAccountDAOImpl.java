@@ -55,6 +55,14 @@ public class BankAccountDAOImpl implements BankAccountDAO {
         return bankAccount;
     }
 
+//    @Override
+//    public List<BankAccount> getBankAccountByUserId(int userId) {
+//        Session session = null;
+//        List<BankAccount> bankAccounts;
+//
+//
+//    }
+
     @Override
     public BankAccount getBankAccountByNameAndUserId(int userId, String bankAccountName) {
         Session session = null;

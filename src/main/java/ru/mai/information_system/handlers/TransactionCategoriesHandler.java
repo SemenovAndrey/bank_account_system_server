@@ -14,13 +14,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.mai.information_system.handlers.ResponseSender.sendResponseForDTO;
+
 public class TransactionCategoriesHandler implements HttpHandler {
 
     private final TransactionCategoryService TRANSACTION_CATEGORY_SERVICE = new TransactionCategoryServiceImpl();
     private final Gson GSON = new Gson();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String localPath = "/transaction_categories";
 
@@ -37,12 +39,16 @@ public class TransactionCategoriesHandler implements HttpHandler {
                 && exchange.getRequestMethod().equals("DELETE")) {
             handleDeleteTransactionCategory(exchange, path.split("/")[2]);
         } else {
-            exchange.sendResponseHeaders(404, 0);
+            try {
+                exchange.sendResponseHeaders(404, 0);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
             exchange.close();
         }
     }
 
-    private void handleGetTransactionCategories(HttpExchange exchange) throws IOException {
+    private void handleGetTransactionCategories(HttpExchange exchange) {
         List<TransactionCategory> transactionCategories = TRANSACTION_CATEGORY_SERVICE.getAllTransactionCategories();
         List<TransactionCategoryDTO> transactionCategoryDTOList = new ArrayList<>();
 
@@ -51,10 +57,10 @@ public class TransactionCategoriesHandler implements HttpHandler {
         }
 
         String response = transactionCategoryDTOList.toString();
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleGetTransactionCategoryById(HttpExchange exchange, String transactionCategoryId) throws IOException {
+    private void handleGetTransactionCategoryById(HttpExchange exchange, String transactionCategoryId) {
         int id = Integer.parseInt(transactionCategoryId);
         TransactionCategory transactionCategory = TRANSACTION_CATEGORY_SERVICE.getTransactionCategoryById(id);
 
@@ -65,47 +71,61 @@ public class TransactionCategoriesHandler implements HttpHandler {
             response = "User not found";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleAddTransactionCategory(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        TransactionCategoryDTO transactionCategoryDTO = GSON.fromJson(requestBody, TransactionCategoryDTO.class);
-        TransactionCategory transactionCategoryFromDB = TRANSACTION_CATEGORY_SERVICE
-                .getTransactionCategoryByUserIdAndCategory(transactionCategoryDTO.getUserId(),
-                                                            transactionCategoryDTO.getCategory());
-
+    private void handleAddTransactionCategory(HttpExchange exchange) {
+        String requestBody;
         String response;
-        if (transactionCategoryFromDB == null) {
-            TransactionCategory transactionCategory = transactionCategoryDTO.toTransactionCategoryEntity();
-            TRANSACTION_CATEGORY_SERVICE.saveTransactionCategory(transactionCategory);
-            response = "Transaction category added successfully";
-        } else {
-            response = "Transaction category with this name already created";
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            TransactionCategoryDTO transactionCategoryDTO = GSON.fromJson(requestBody, TransactionCategoryDTO.class);
+            TransactionCategory transactionCategoryFromDB = TRANSACTION_CATEGORY_SERVICE
+                    .getTransactionCategoryByUserIdAndCategory(transactionCategoryDTO.getUserId(),
+                            transactionCategoryDTO.getCategory());
+
+            if (transactionCategoryFromDB == null) {
+                TransactionCategory transactionCategory = transactionCategoryDTO.toTransactionCategoryEntity();
+                TRANSACTION_CATEGORY_SERVICE.saveTransactionCategory(transactionCategory);
+                response = "Transaction category added successfully";
+            } else {
+                response = "Transaction category with this name already created";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleUpdateTransactionCategory(HttpExchange exchange) throws IOException {
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
-        TransactionCategoryDTO transactionCategoryDTO = GSON.fromJson(requestBody, TransactionCategoryDTO.class);
-        TransactionCategory transactionCategoryFromDB = TRANSACTION_CATEGORY_SERVICE
-                .getTransactionCategoryById(transactionCategoryDTO.getId());
-
+    private void handleUpdateTransactionCategory(HttpExchange exchange) {
+        String requestBody;
         String response;
-        if (transactionCategoryFromDB == null) {
-            response = "Transaction category not found";
-        } else {
-            TransactionCategory transactionCategory = transactionCategoryDTO.toTransactionCategoryEntity();
-            TRANSACTION_CATEGORY_SERVICE.saveTransactionCategory(transactionCategory);
-            response = "Transaction category added successfully";
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            TransactionCategoryDTO transactionCategoryDTO = GSON.fromJson(requestBody, TransactionCategoryDTO.class);
+            TransactionCategory transactionCategoryFromDB = TRANSACTION_CATEGORY_SERVICE
+                    .getTransactionCategoryById(transactionCategoryDTO.getId());
+
+            if (transactionCategoryFromDB == null) {
+                response = "Transaction category not found";
+            } else {
+                TransactionCategory transactionCategory = transactionCategoryDTO.toTransactionCategoryEntity();
+                TRANSACTION_CATEGORY_SERVICE.saveTransactionCategory(transactionCategory);
+                response = "Transaction category added successfully";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
         }
 
-        sendResponse(exchange, response);
+        sendResponseForDTO(exchange, response);
     }
 
-    private void handleDeleteTransactionCategory(HttpExchange exchange, String transactionCategoryId) throws IOException {
+    private void handleDeleteTransactionCategory(HttpExchange exchange, String transactionCategoryId) {
         int id = Integer.parseInt(transactionCategoryId);
         TransactionCategory transactionCategory = TRANSACTION_CATEGORY_SERVICE.getTransactionCategoryById(id);
 
@@ -117,18 +137,6 @@ public class TransactionCategoriesHandler implements HttpHandler {
             response = "Transaction category deleted successfully";
         }
 
-        sendResponse(exchange, response);
-    }
-
-    private void sendResponse(HttpExchange exchange, String response) throws IOException {
-        byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
-        exchange.sendResponseHeaders(200, responseBytes.length);
-
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(responseBytes);
-        } catch (Exception e) {
-            System.err.println("Error");
-            System.out.println(e.getMessage());
-        }
+        sendResponseForDTO(exchange, response);
     }
 }

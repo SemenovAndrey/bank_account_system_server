@@ -10,6 +10,8 @@ public interface BankAccountDAO {
 
     public BankAccount getBankAccountById(int id);
 
+//    public List<BankAccount> getBankAccountByUserId(int userId);
+
     public BankAccount getBankAccountByNameAndUserId(int userId, String bankAccountName);
 
     public void saveBankAccount(BankAccount bankAccount);
