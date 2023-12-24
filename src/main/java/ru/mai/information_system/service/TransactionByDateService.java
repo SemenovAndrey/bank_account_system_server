@@ -10,6 +10,8 @@ public interface TransactionByDateService {
 
     public TransactionByDate getTransactionByDateById(int id);
 
+    public List<TransactionByDate> getTransactionsByDateByBankAccountId(int bankAccountId);
+
     public void saveTransactionByDate(TransactionByDate transactionByDate);
 
     public void deleteTransactionByDateById(int id);

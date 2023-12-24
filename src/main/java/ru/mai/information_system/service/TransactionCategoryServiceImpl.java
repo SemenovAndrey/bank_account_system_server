@@ -21,6 +21,11 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
     }
 
     @Override
+    public List<TransactionCategory> getTransactionCategoryByUserId(int userId) {
+        return transactionCategoryDAO.getTransactionCategoriesByUserId(userId);
+    }
+
+    @Override
     public TransactionCategory getTransactionCategoryByUserIdAndCategory(int userId, String category) {
         return transactionCategoryDAO.getTransactionCategoryByUserIdAndCategory(userId, category);
     }

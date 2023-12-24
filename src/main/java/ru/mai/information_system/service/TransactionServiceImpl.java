@@ -21,6 +21,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public List<Transaction> getTransactionsByBankAccountId(int bankAccountId) {
+        return transactionDAO.getTransactionsByBankAccountId(bankAccountId);
+    }
+
+    @Override
     public void saveTransaction(Transaction transaction) {
         transactionDAO.saveTransaction(transaction);
     }

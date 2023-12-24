@@ -56,6 +56,30 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
     }
 
     @Override
+    public List<TransactionCategory> getTransactionCategoriesByUserId(int userId) {
+        Session session = null;
+        List<TransactionCategory> transactionCategories = new ArrayList<>();
+
+        try {
+            session = SESSION_FACTORY.getCurrentSession();
+            session.beginTransaction();
+
+            transactionCategories = session.createQuery("from TransactionCategory " +
+                    "where user_id =: userId").setParameter("userId", userId)
+                    .getResultList();
+            System.out.println(transactionCategories);
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+
+        return transactionCategories;
+    }
+
+    @Override
     public TransactionCategory getTransactionCategoryByUserIdAndCategory(int userId, String category) {
         Session session = null;
         TransactionCategory transactionCategory = null;

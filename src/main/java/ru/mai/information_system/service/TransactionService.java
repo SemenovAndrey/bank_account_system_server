@@ -10,6 +10,8 @@ public interface TransactionService {
 
     public Transaction getTransactionById(int id);
 
+    public List<Transaction> getTransactionsByBankAccountId(int bankAccountId);
+
     public void saveTransaction(Transaction user);
 
     public void deleteTransactionById(int id);

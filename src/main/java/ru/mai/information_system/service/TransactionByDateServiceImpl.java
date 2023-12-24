@@ -21,6 +21,11 @@ public class TransactionByDateServiceImpl implements TransactionByDateService {
     }
 
     @Override
+    public List<TransactionByDate> getTransactionsByDateByBankAccountId(int bankAccountId) {
+        return transactionByDateDAO.getTransactionsByDateByBankAccountId(bankAccountId);
+    }
+
+    @Override
     public void saveTransactionByDate(TransactionByDate transactionByDate) {
         transactionByDateDAO.saveTransactionByDate(transactionByDate);
     }

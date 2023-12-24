@@ -10,6 +10,8 @@ public interface TransactionCategoryDAO {
 
     public TransactionCategory getTransactionCategoryById(int id);
 
+    public List<TransactionCategory> getTransactionCategoriesByUserId(int userId);
+
     public TransactionCategory getTransactionCategoryByUserIdAndCategory(int userId, String category);
 
     public void saveTransactionCategory(TransactionCategory transactionCategory);

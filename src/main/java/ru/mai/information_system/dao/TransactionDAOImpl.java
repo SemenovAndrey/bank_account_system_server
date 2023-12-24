@@ -56,6 +56,31 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
+    public List<Transaction> getTransactionsByBankAccountId(int bankAccountId) {
+        Session session = null;
+        List<Transaction> transactions = new ArrayList<>();
+
+        try {
+            session = SESSION_FACTORY.getCurrentSession();
+            session.beginTransaction();
+
+            transactions = session.createQuery("from Transaction " +
+                            "where bank_account_id =: bankAccountId")
+                    .setParameter("bankAccountId", bankAccountId)
+                    .getResultList();
+            System.out.println(transactions);
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+
+        return transactions;
+    }
+
+    @Override
     public void saveTransaction(Transaction transaction) {
         Session session = SESSION_FACTORY.getCurrentSession();
 

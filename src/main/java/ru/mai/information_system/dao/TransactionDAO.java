@@ -10,6 +10,8 @@ public interface TransactionDAO {
 
     public Transaction getTransactionById(int id);
 
+    public List<Transaction> getTransactionsByBankAccountId(int bankAccountId);
+
     public void saveTransaction(Transaction transaction);
 
     public void deleteTransactionById(int id);

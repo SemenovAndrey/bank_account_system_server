@@ -56,6 +56,31 @@ public class TransactionByDateDAOImpl implements TransactionByDateDAO {
     }
 
     @Override
+    public List<TransactionByDate> getTransactionsByDateByBankAccountId(int bankAccountId) {
+        Session session = null;
+        List<TransactionByDate> transactionsByDate = new ArrayList<>();
+
+        try {
+            session = SESSION_FACTORY.getCurrentSession();
+            session.beginTransaction();
+
+            transactionsByDate = session.createQuery("from TransactionByDate " +
+                    "where bank_account_id =: bankAccountId")
+                    .setParameter("bankAccountId", bankAccountId)
+                    .getResultList();
+            System.out.println(transactionsByDate);
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+
+        return transactionsByDate;
+    }
+
+    @Override
     public void saveTransactionByDate(TransactionByDate transactionByDate) {
         Session session = SESSION_FACTORY.getCurrentSession();
 

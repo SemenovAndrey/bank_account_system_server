@@ -10,6 +10,8 @@ public interface TransactionCategoryService {
 
     public TransactionCategory getTransactionCategoryById(int id);
 
+    public List<TransactionCategory> getTransactionCategoryByUserId(int userId);
+
     public TransactionCategory getTransactionCategoryByUserIdAndCategory(int userId, String category);
 
     public void saveTransactionCategory(TransactionCategory transactionCategory);
