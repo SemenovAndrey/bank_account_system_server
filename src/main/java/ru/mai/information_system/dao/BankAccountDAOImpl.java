@@ -2,6 +2,7 @@ package ru.mai.information_system.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import ru.mai.information_system.Server;
 import ru.mai.information_system.entity.BankAccount;
 
@@ -55,31 +56,47 @@ public class BankAccountDAOImpl implements BankAccountDAO {
         return bankAccount;
     }
 
-//    @Override
-//    public List<BankAccount> getBankAccountByUserId(int userId) {
-//        Session session = null;
-//        List<BankAccount> bankAccounts;
-//
-//
-//    }
-
     @Override
-    public BankAccount getBankAccountByNameAndUserId(int userId, String bankAccountName) {
+    public List<BankAccount> getBankAccountByUserId(int userId) {
         Session session = null;
+        List<BankAccount> bankAccounts = new ArrayList<>();
 
-        BankAccount bankAccount = null;
         try {
-            List<BankAccount> bankAccounts = getAllBankAccounts();
             session = SESSION_FACTORY.getCurrentSession();
             session.beginTransaction();
-            for (BankAccount account : bankAccounts) {
-                if (userId == account.getUser().getId() && bankAccountName.equals(account.getName())) {
-                    bankAccount = account;
-                    break;
-                }
-            }
-            System.out.println("Method getBankAccountByNameAndUserId()");
+
+            bankAccounts = session.createQuery("from BankAccount " +
+                    "where user_id =: userId").setParameter("userId", userId)
+                    .getResultList();
+            System.out.println(bankAccounts);
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+
+        return bankAccounts;
+    }
+
+    @Override
+    public BankAccount getBankAccountByUserIdAndName(int userId, String bankAccountName) {
+        Session session = null;
+        BankAccount bankAccount = null;
+
+        try {
+            session = SESSION_FACTORY.getCurrentSession();
+            session.beginTransaction();
+
+            Query<BankAccount> query = session.createQuery("from BankAccount " +
+                    "where user_id =: userId and name =: name");
+            query.setParameter("userId", userId);
+            query.setParameter("name", bankAccountName);
+
+            bankAccount = query.uniqueResult();
             System.out.println(bankAccount);
+
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());

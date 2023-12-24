@@ -21,8 +21,13 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccount getBankAccountByNameAndUserId(int userId, String bankAccountName) {
-        return bankAccountDAO.getBankAccountByNameAndUserId(userId, bankAccountName);
+    public List<BankAccount> getBankAccountsByUserId(int userId) {
+        return bankAccountDAO.getBankAccountByUserId(userId);
+    }
+
+    @Override
+    public BankAccount getBankAccountByUserIdAndName(int userId, String bankAccountName) {
+        return bankAccountDAO.getBankAccountByUserIdAndName(userId, bankAccountName);
     }
 
     @Override

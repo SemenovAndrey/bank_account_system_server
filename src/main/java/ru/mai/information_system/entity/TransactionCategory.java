@@ -22,12 +22,12 @@ public class TransactionCategory {
     @Column(name = "category")
     private String category;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+    @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "transactionCategory",
             fetch = FetchType.LAZY)
     private List<Transaction> transactionList;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+    @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "transactionCategory",
             fetch = FetchType.LAZY)
     private List<TransactionByDate> transactionByDateList;

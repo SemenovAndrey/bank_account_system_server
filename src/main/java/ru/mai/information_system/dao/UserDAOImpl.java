@@ -59,19 +59,14 @@ public class UserDAOImpl implements UserDAO {
     public User getUserByEmail(String email) {
         Session session = null;
         User user = null;
+
         try {
-            List<User> users = this.getAllUsers();
             session = SESSION_FACTORY.getCurrentSession();
             session.beginTransaction();
-            for (User userCheck : users) {
-                if (email.equals(userCheck.getEmail())) {
-                    user = userCheck;
-                    break;
-                }
-            }
-            System.out.println("Method getUserByEmail()");
+
+            user = session.createQuery("from User where email =: email", User.class)
+                    .setParameter("email", email).getSingleResult();
             System.out.println(user);
-            session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {

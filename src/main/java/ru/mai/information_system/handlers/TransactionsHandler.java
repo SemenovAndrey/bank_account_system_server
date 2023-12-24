@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.mai.information_system.handlers.ResponseSender.sendResponseForDTO;
+import static ru.mai.information_system.handlers.ResponseSender.sendResponse;
 
 public class TransactionsHandler implements HttpHandler {
 
@@ -55,7 +55,7 @@ public class TransactionsHandler implements HttpHandler {
         }
 
         String response = transactionDTOList.toString();
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleGetTransactionById(HttpExchange exchange, String transactionId) {
@@ -69,7 +69,7 @@ public class TransactionsHandler implements HttpHandler {
             response = "Transaction not found";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleAddTransaction(HttpExchange exchange) {
@@ -87,7 +87,7 @@ public class TransactionsHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleUpdateTransaction(HttpExchange exchange) {
@@ -111,7 +111,7 @@ public class TransactionsHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleDeleteTransaction(HttpExchange exchange, String transactionId) {
@@ -126,6 +126,6 @@ public class TransactionsHandler implements HttpHandler {
             response = "Transaction deleted successfully";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 }

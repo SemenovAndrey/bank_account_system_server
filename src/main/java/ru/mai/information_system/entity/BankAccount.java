@@ -28,7 +28,7 @@ public class BankAccount {
     @Column(name = "balance")
     private double balance;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+    @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "bankAccount",
             fetch = FetchType.LAZY)
     private List<Transaction> transactionList;

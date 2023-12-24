@@ -9,12 +9,10 @@ import ru.mai.information_system.service.TransactionCategoryService;
 import ru.mai.information_system.service.TransactionCategoryServiceImpl;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.mai.information_system.handlers.ResponseSender.sendResponseForDTO;
+import static ru.mai.information_system.handlers.ResponseSender.sendResponse;
 
 public class TransactionCategoriesHandler implements HttpHandler {
 
@@ -57,7 +55,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
         }
 
         String response = transactionCategoryDTOList.toString();
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleGetTransactionCategoryById(HttpExchange exchange, String transactionCategoryId) {
@@ -71,7 +69,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
             response = "User not found";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleAddTransactionCategory(HttpExchange exchange) {
@@ -97,7 +95,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleUpdateTransactionCategory(HttpExchange exchange) {
@@ -122,7 +120,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleDeleteTransactionCategory(HttpExchange exchange, String transactionCategoryId) {
@@ -137,6 +135,6 @@ public class TransactionCategoriesHandler implements HttpHandler {
             response = "Transaction category deleted successfully";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 }

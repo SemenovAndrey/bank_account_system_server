@@ -9,12 +9,10 @@ import ru.mai.information_system.service.TransactionByDateService;
 import ru.mai.information_system.service.TransactionByDateServiceImpl;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.mai.information_system.handlers.ResponseSender.sendResponseForDTO;
+import static ru.mai.information_system.handlers.ResponseSender.sendResponse;
 
 public class TransactionsByDateHandler implements HttpHandler {
 
@@ -57,7 +55,7 @@ public class TransactionsByDateHandler implements HttpHandler {
         }
 
         String response = transactionByDateDTOList.toString();
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleGetTransactionByDateById(HttpExchange exchange, String transactionByDateId) {
@@ -71,7 +69,7 @@ public class TransactionsByDateHandler implements HttpHandler {
             response = "Transaction by date not found";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleAddTransactionByDate(HttpExchange exchange) {
@@ -89,7 +87,7 @@ public class TransactionsByDateHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleUpdateTransactionByDate(HttpExchange exchange) {
@@ -113,7 +111,7 @@ public class TransactionsByDateHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleDeleteTransactionByDate(HttpExchange exchange, String transactionByDateId) {
@@ -127,6 +125,6 @@ public class TransactionsByDateHandler implements HttpHandler {
             response = "Transaction by date deleted successfully";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 }

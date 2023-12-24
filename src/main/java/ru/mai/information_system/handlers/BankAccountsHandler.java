@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.mai.information_system.handlers.ResponseSender.sendResponseForDTO;
+import static ru.mai.information_system.handlers.ResponseSender.sendResponse;
 
 public class BankAccountsHandler implements HttpHandler {
 
@@ -29,6 +29,12 @@ public class BankAccountsHandler implements HttpHandler {
         } else if (path.startsWith(localPath + "/") && path.split("/").length == 3
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetBankAccountById(exchange, path.split("/")[2]);
+        } else if (path.startsWith(localPath + "/userId") && path.split("/").length == 4
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetBankAccountByUserId(exchange, path.split("/")[3]);
+        } else if (path.startsWith(localPath + "/userIdAndName") && path.split("/").length == 5
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetBankAccountByUserIdAndName(exchange, path.split("/")[3], path.split("/")[4]);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("POST")) {
             handleAddBankAccount(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
@@ -55,7 +61,7 @@ public class BankAccountsHandler implements HttpHandler {
         }
 
         String response = bankAccountDTOList.toString();
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleGetBankAccountById(HttpExchange exchange, String bankAccountId) {
@@ -64,12 +70,41 @@ public class BankAccountsHandler implements HttpHandler {
 
         String response;
         if (bankAccount != null) {
-            response = bankAccount.toString();
+            BankAccountDTO bankAccountDTO = bankAccount.toBankAccountDTO();
+            response = bankAccountDTO.toString();
         } else {
             response = "Bank account not found";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetBankAccountByUserId(HttpExchange exchange, String requestUserId) {
+        int userId = Integer.parseInt(requestUserId);
+        List<BankAccount> bankAccounts = BANK_ACCOUNT_SERVICE.getBankAccountsByUserId(userId);
+        List<BankAccountDTO> bankAccountDTOList = new ArrayList<>();
+        for (BankAccount bankAccount : bankAccounts) {
+            bankAccountDTOList.add(bankAccount.toBankAccountDTO());
+        }
+
+        String response = bankAccountDTOList.toString();
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetBankAccountByUserIdAndName(HttpExchange exchange, String requestUserId,
+                                                     String bankAccountName) {
+        int userId = Integer.parseInt(requestUserId);
+        BankAccount bankAccount = BANK_ACCOUNT_SERVICE.getBankAccountByUserIdAndName(userId, bankAccountName);
+
+        String response;
+        if (bankAccount != null) {
+            BankAccountDTO bankAccountDTO = bankAccount.toBankAccountDTO();
+            response = bankAccountDTO.toString();
+        } else {
+            response = "Bank account not found";
+        }
+
+        sendResponse(exchange, response);
     }
 
     private void handleAddBankAccount(HttpExchange exchange) {
@@ -80,7 +115,7 @@ public class BankAccountsHandler implements HttpHandler {
             requestBody = new String(exchange.getRequestBody().readAllBytes());
             BankAccountDTO bankAccountDTO = GSON.fromJson(requestBody, BankAccountDTO.class);
             BankAccount bankAccountFromDB = BANK_ACCOUNT_SERVICE
-                    .getBankAccountByNameAndUserId(bankAccountDTO.getUserId(), bankAccountDTO.getName());
+                    .getBankAccountByUserIdAndName(bankAccountDTO.getUserId(), bankAccountDTO.getName());
 
             if (bankAccountFromDB == null) {
                 BankAccount bankAccount = bankAccountDTO.toBankAccountEntity();
@@ -94,7 +129,7 @@ public class BankAccountsHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleUpdateBankAccount(HttpExchange exchange) {
@@ -118,7 +153,7 @@ public class BankAccountsHandler implements HttpHandler {
             response = "Error";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 
     private void handleDeleteBankAccount(HttpExchange exchange, String bankAccountId) {
@@ -133,6 +168,6 @@ public class BankAccountsHandler implements HttpHandler {
             response = "Bank account deleted successfully";
         }
 
-        sendResponseForDTO(exchange, response);
+        sendResponse(exchange, response);
     }
 }

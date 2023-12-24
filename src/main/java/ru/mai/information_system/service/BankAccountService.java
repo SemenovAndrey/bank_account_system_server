@@ -10,7 +10,9 @@ public interface BankAccountService {
 
     public BankAccount getBankAccountById(int id);
 
-    public BankAccount getBankAccountByNameAndUserId(int userId, String bankAccountName);
+    public List<BankAccount> getBankAccountsByUserId(int userId);
+
+    public BankAccount getBankAccountByUserIdAndName(int userId, String bankAccountName);
 
     public void saveBankAccount(BankAccount bankAccount);
 

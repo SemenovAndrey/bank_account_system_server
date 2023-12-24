@@ -14,7 +14,7 @@ public class BankAccountType {
     @Column(name = "type")
     private String type;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+    @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "bankAccountType",
             fetch = FetchType.EAGER)
     private List<BankAccount> bankAccountList;

@@ -18,12 +18,12 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+    @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "user",
             fetch = FetchType.LAZY)
     private List<BankAccount> bankAccountList;
 
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH },
+    @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "user",
             fetch = FetchType.LAZY)
     private List<TransactionCategory> transactionCategoryList;
