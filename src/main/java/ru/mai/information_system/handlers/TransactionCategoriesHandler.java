@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.mai.information_system.dto.TransactionCategoryDTO;
-import ru.mai.information_system.entity.Transaction;
 import ru.mai.information_system.entity.TransactionCategory;
 import ru.mai.information_system.service.TransactionCategoryService;
 import ru.mai.information_system.service.TransactionCategoryServiceImpl;
