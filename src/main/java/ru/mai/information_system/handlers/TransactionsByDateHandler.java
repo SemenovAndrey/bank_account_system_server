@@ -22,13 +22,16 @@ public class TransactionsByDateHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
-        String localPath = "/transaction_categories";
+        String localPath = "/transactions_by_date";
 
         if (path.equals(localPath) && exchange.getRequestMethod().equals("GET")) {
             handleGetTransactionsByDate(exchange);
         } else if (path.startsWith(localPath + "/") && path.split("/").length == 3
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetTransactionByDateById(exchange, path.split("/")[2]);
+        } else if (path.startsWith(localPath + "/bankAccountId") && path.split("/").length == 4
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetTransactionsByDateByBankAccountId(exchange, path.split("/")[3]);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("POST")) {
             handleAddTransactionByDate(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
@@ -64,11 +67,25 @@ public class TransactionsByDateHandler implements HttpHandler {
 
         String response;
         if (transactionByDate != null) {
-            response = transactionByDate.toString();
+            TransactionByDateDTO transactionByDateDTO = transactionByDate.toTransactionByDateDTO();
+            response = transactionByDateDTO.toString();
         } else {
             response = "Transaction by date not found";
         }
 
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetTransactionsByDateByBankAccountId(HttpExchange exchange, String requestBankAccountId) {
+        int bankAccountId = Integer.parseInt(requestBankAccountId);
+        List<TransactionByDate> transactionsByDate = TRANSACTION_BY_DATE_SERVICE
+                .getTransactionsByDateByBankAccountId(bankAccountId);
+        List<TransactionByDateDTO> transactionByDateDTOList = new ArrayList<>();
+        for (TransactionByDate transactionByDate : transactionsByDate) {
+            transactionByDateDTOList.add(transactionByDate.toTransactionByDateDTO());
+        }
+
+        String response = transactionByDateDTOList.toString();
         sendResponse(exchange, response);
     }
 

@@ -110,7 +110,7 @@ public class TransactionCategory {
                 '}';
     }
 
-    public TransactionCategoryDTO transactionCategoryDTO() {
+    public TransactionCategoryDTO toTransactionCategoryDTO() {
         TransactionCategoryDTO transactionCategoryDTO = new TransactionCategoryDTO();
         transactionCategoryDTO.setId(this.id);
         transactionCategoryDTO.setUserId(this.user.getId());

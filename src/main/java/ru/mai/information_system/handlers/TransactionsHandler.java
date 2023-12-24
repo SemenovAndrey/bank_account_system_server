@@ -22,13 +22,16 @@ public class TransactionsHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
-        String localPath = "/transaction_categories";
+        String localPath = "/transactions";
 
         if (path.equals(localPath) && exchange.getRequestMethod().equals("GET")) {
             handleGetTransactions(exchange);
         } else if (path.startsWith(localPath + "/") && path.split("/").length == 3
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetTransactionById(exchange, path.split("/")[2]);
+        } else if (path.startsWith(localPath + "/bankAccountId") && path.split("/").length == 4
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetTransactionsByBankAccountId(exchange, path.split("/")[3]);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("POST")) {
             handleAddTransaction(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
@@ -69,6 +72,18 @@ public class TransactionsHandler implements HttpHandler {
             response = "Transaction not found";
         }
 
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetTransactionsByBankAccountId(HttpExchange exchange, String requestBankAccountId) {
+        int bankAccountId = Integer.parseInt(requestBankAccountId);
+        List<Transaction> transactions = TRANSACTION_SERVICE.getTransactionsByBankAccountId(bankAccountId);
+        List<TransactionDTO> transactionDTOList = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            transactionDTOList.add(transaction.toTransactionDTO());
+        }
+
+        String response = transactionDTOList.toString();
         sendResponse(exchange, response);
     }
 

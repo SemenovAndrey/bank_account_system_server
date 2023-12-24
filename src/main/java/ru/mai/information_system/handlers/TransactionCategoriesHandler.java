@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.mai.information_system.dto.TransactionCategoryDTO;
+import ru.mai.information_system.entity.Transaction;
 import ru.mai.information_system.entity.TransactionCategory;
 import ru.mai.information_system.service.TransactionCategoryService;
 import ru.mai.information_system.service.TransactionCategoryServiceImpl;
@@ -29,6 +30,13 @@ public class TransactionCategoriesHandler implements HttpHandler {
         } else if (path.startsWith(localPath + "/") && path.split("/").length == 3
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetTransactionCategoryById(exchange, path.split("/")[2]);
+        } else if (path.startsWith(localPath + "/userId") && path.split("/").length == 4
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetTransactionCategoriesByUserId(exchange, path.split("/")[3]);
+        } else if (path.startsWith(localPath + "/userIdAndCategory") && path.split("/").length == 5
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetTransactionCategoriesByUserIdAndCategory(exchange, path.split("/")[3],
+                    path.split("/")[4]);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("POST")) {
             handleAddTransactionCategory(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
@@ -51,7 +59,7 @@ public class TransactionCategoriesHandler implements HttpHandler {
         List<TransactionCategoryDTO> transactionCategoryDTOList = new ArrayList<>();
 
         for (TransactionCategory transactionCategory : transactionCategories) {
-            transactionCategoryDTOList.add(transactionCategory.transactionCategoryDTO());
+            transactionCategoryDTOList.add(transactionCategory.toTransactionCategoryDTO());
         }
 
         String response = transactionCategoryDTOList.toString();
@@ -67,6 +75,36 @@ public class TransactionCategoriesHandler implements HttpHandler {
             response = transactionCategory.toString();
         } else {
             response = "User not found";
+        }
+
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetTransactionCategoriesByUserId(HttpExchange exchange, String requestUserId) {
+        int userId = Integer.parseInt(requestUserId);
+        List<TransactionCategory> transactionCategories = TRANSACTION_CATEGORY_SERVICE
+                .getTransactionCategoryByUserId(userId);
+        List<TransactionCategoryDTO> transactionCategoryDTOList = new ArrayList<>();
+        for (TransactionCategory transactionCategory : transactionCategories) {
+            transactionCategoryDTOList.add(transactionCategory.toTransactionCategoryDTO());
+        }
+
+        String response = transactionCategoryDTOList.toString();
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetTransactionCategoriesByUserIdAndCategory(HttpExchange exchange, String requestUserId,
+                                                                   String category) {
+        int userId = Integer.parseInt(requestUserId);
+        TransactionCategory transactionCategory = TRANSACTION_CATEGORY_SERVICE
+                .getTransactionCategoryByUserIdAndCategory(userId, category);
+
+        String response;
+        if (transactionCategory != null) {
+            TransactionCategoryDTO transactionCategoryDTO = transactionCategory.toTransactionCategoryDTO();
+            response = transactionCategoryDTO.toString();
+        } else {
+            response = "Transaction category not found";
         }
 
         sendResponse(exchange, response);
