@@ -67,7 +67,8 @@ public class TransactionsHandler implements HttpHandler {
 
         String response;
         if (transaction != null) {
-            response = transaction.toString();
+            TransactionDTO transactionDTO = transaction.toTransactionDTO();
+            response = transactionDTO.toString();
         } else {
             response = "Transaction not found";
         }

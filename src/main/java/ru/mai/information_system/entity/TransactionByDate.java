@@ -24,34 +24,24 @@ public class TransactionByDate {
     private TransactionCategory transactionCategory;
     @Column(name = "transaction_date")
     private String transactionDate;
-    @Column(name = "comment")
-    private String comment;
 
     public TransactionByDate() {}
 
-    public TransactionByDate(double amount, String transactionDate, String comment) {
-        this.amount = amount;
-        this.transactionDate = transactionDate;
-        this.comment = comment;
-    }
-
     public TransactionByDate(BankAccount bankAccount, double amount, TransactionCategory transactionCategory,
-                             String transactionDate, String comment) {
+                             String transactionDate) {
         this.bankAccount = bankAccount;
         this.amount = amount;
         this.transactionCategory = transactionCategory;
         this.transactionDate = transactionDate;
-        this.comment = comment;
     }
 
     public TransactionByDate(int id, BankAccount bankAccount, double amount, TransactionCategory transactionCategory,
-                             String transactionDate, String comment) {
+                             String transactionDate) {
         this.id = id;
         this.bankAccount = bankAccount;
         this.amount = amount;
         this.transactionCategory = transactionCategory;
         this.transactionDate = transactionDate;
-        this.comment = comment;
     }
 
     public int getId() {
@@ -94,23 +84,14 @@ public class TransactionByDate {
         this.transactionDate = transactionDate;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
     @Override
     public String toString() {
         return "TransactionByDate{" +
                 "id=" + id +
-                ", bankAccountId=" + bankAccount.getId() +
+                ", bankAccount=" + bankAccount +
                 ", amount=" + amount +
-                ", transactionCategoryId=" + transactionCategory.getId() +
+                ", transactionCategory=" + transactionCategory +
                 ", transactionDate='" + transactionDate + '\'' +
-                ", comment='" + comment + '\'' +
                 '}';
     }
 
@@ -121,7 +102,6 @@ public class TransactionByDate {
         transactionByDateDTO.setAmount(this.amount);
         transactionByDateDTO.setTransactionCategoryId(this.transactionCategory.getId());
         transactionByDateDTO.setTransactionDate(this.transactionDate);
-        transactionByDateDTO.setComment(this.comment);
 
         return transactionByDateDTO;
     }

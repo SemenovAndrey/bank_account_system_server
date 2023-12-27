@@ -32,10 +32,6 @@ public class TransactionCategoriesHandler implements HttpHandler {
         } else if (path.startsWith(localPath + "/userId") && path.split("/").length == 4
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetTransactionCategoriesByUserId(exchange, path.split("/")[3]);
-        } else if (path.startsWith(localPath + "/userIdAndCategory") && path.split("/").length == 5
-                && exchange.getRequestMethod().equals("GET")) {
-            handleGetTransactionCategoriesByUserIdAndCategory(exchange, path.split("/")[3],
-                    path.split("/")[4]);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("POST")) {
             handleAddTransactionCategory(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
@@ -71,9 +67,10 @@ public class TransactionCategoriesHandler implements HttpHandler {
 
         String response;
         if (transactionCategory != null) {
-            response = transactionCategory.toString();
+            TransactionCategoryDTO transactionCategoryDTO = transactionCategory.toTransactionCategoryDTO();
+            response = transactionCategoryDTO.toString();
         } else {
-            response = "User not found";
+            response = "Transaction category not found";
         }
 
         sendResponse(exchange, response);
@@ -89,23 +86,6 @@ public class TransactionCategoriesHandler implements HttpHandler {
         }
 
         String response = transactionCategoryDTOList.toString();
-        sendResponse(exchange, response);
-    }
-
-    private void handleGetTransactionCategoriesByUserIdAndCategory(HttpExchange exchange, String requestUserId,
-                                                                   String category) {
-        int userId = Integer.parseInt(requestUserId);
-        TransactionCategory transactionCategory = TRANSACTION_CATEGORY_SERVICE
-                .getTransactionCategoryByUserIdAndCategory(userId, category);
-
-        String response;
-        if (transactionCategory != null) {
-            TransactionCategoryDTO transactionCategoryDTO = transactionCategory.toTransactionCategoryDTO();
-            response = transactionCategoryDTO.toString();
-        } else {
-            response = "Transaction category not found";
-        }
-
         sendResponse(exchange, response);
     }
 

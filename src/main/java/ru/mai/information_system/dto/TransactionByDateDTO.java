@@ -11,7 +11,6 @@ public class TransactionByDateDTO {
     private double amount;
     private int transactionCategoryId;
     private String transactionDate;
-    private String comment;
 
     public TransactionByDateDTO() {}
 
@@ -22,16 +21,6 @@ public class TransactionByDateDTO {
         this.amount = amount;
         this.transactionCategoryId = transactionCategoryId;
         this.transactionDate = transactionDate;
-    }
-
-    public TransactionByDateDTO(int id, int bankAccountId, double amount,
-                                int transactionCategoryId, String transactionDate, String comment) {
-        this.id = id;
-        this.bankAccountId = bankAccountId;
-        this.amount = amount;
-        this.transactionCategoryId = transactionCategoryId;
-        this.transactionDate = transactionDate;
-        this.comment = comment;
     }
 
     public int getId() {
@@ -74,14 +63,6 @@ public class TransactionByDateDTO {
         this.transactionDate = transactionDate;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
     @Override
     public String toString() {
         return "TransactionByDateDTO{" +
@@ -90,7 +71,6 @@ public class TransactionByDateDTO {
                 ", amount=" + amount +
                 ", transactionCategoryId=" + transactionCategoryId +
                 ", transactionDate='" + transactionDate + '\'' +
-                ", comment='" + comment + '\'' +
                 '}';
     }
 
@@ -102,7 +82,6 @@ public class TransactionByDateDTO {
         transactionByDate.setTransactionCategory(new TransactionCategoryServiceImpl()
                 .getTransactionCategoryById(this.transactionCategoryId));
         transactionByDate.setTransactionDate(this.transactionDate);
-        transactionByDate.setComment(this.comment);
 
         return transactionByDate;
     }

@@ -34,11 +34,6 @@ public class TransactionCategory {
 
     public TransactionCategory() {}
 
-    public TransactionCategory(boolean type, String category) {
-        this.type = type;
-        this.category = category;
-    }
-
     public TransactionCategory(User user, boolean type, String category) {
         this.user = user;
         this.type = type;

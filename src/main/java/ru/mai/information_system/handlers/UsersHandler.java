@@ -3,6 +3,8 @@ package ru.mai.information_system.handlers;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.mai.information_system.entity.User;
 import ru.mai.information_system.service.UserService;
 import ru.mai.information_system.service.UserServiceImpl;
@@ -16,6 +18,7 @@ public class UsersHandler implements HttpHandler {
 
     private final UserService USER_SERVICE = new UserServiceImpl();
     private final Gson GSON = new Gson();
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public void handle(HttpExchange exchange) {
@@ -30,8 +33,10 @@ public class UsersHandler implements HttpHandler {
         } else if (path.startsWith(localPath + "/email") && path.split("/").length == 4
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetUserByEmail(exchange, path.split("/")[3]);
-        } else if (path.equals(localPath) && exchange.getRequestMethod().equals("POST")) {
-            handleAddUser(exchange);
+        } else if (path.equals(localPath + "/auth") && exchange.getRequestMethod().equals("POST")) {
+            handleUserAuth(exchange);
+        } else if (path.equals(localPath + "/register") && exchange.getRequestMethod().equals("POST")) {
+            handleUserRegister(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
             handleUpdateUser(exchange);
         } else if (path.startsWith(localPath + "/") && path.split("/").length == 3
@@ -80,7 +85,7 @@ public class UsersHandler implements HttpHandler {
         sendResponse(exchange, response);
     }
 
-    private void handleAddUser(HttpExchange exchange) {
+    private void handleUserAuth(HttpExchange exchange) {
         String requestBody;
         String response;
 
@@ -89,9 +94,34 @@ public class UsersHandler implements HttpHandler {
             User user = GSON.fromJson(requestBody, User.class);
             User userFromDB = USER_SERVICE.getUserByEmail(user.getEmail());
 
+            System.out.println(user.getPassword());
+            System.out.println(userFromDB.getPassword());
+            if (passwordEncoder.matches(user.getPassword(), userFromDB.getPassword())) {
+                response = "Authentication was successful";
+            } else {
+                response = "Authentication was unsuccessful";
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            response = "Error";
+        }
+
+        sendResponse(exchange, response);
+    }
+
+    private void handleUserRegister(HttpExchange exchange) {
+        String requestBody;
+        String response;
+
+        try {
+            requestBody = new String(exchange.getRequestBody().readAllBytes());
+            User user = GSON.fromJson(requestBody, User.class);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User userFromDB = USER_SERVICE.getUserByEmail(user.getEmail());
+
             if (userFromDB == null) {
                 USER_SERVICE.saveUser(user);
-                response = "User added successfully";
+                response = "User added successful";
             } else {
                 response = "User with this email already created";
             }

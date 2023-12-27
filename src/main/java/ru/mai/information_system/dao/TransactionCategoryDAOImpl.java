@@ -2,6 +2,7 @@ package ru.mai.information_system.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import ru.mai.information_system.Server;
 import ru.mai.information_system.entity.TransactionCategory;
 
@@ -84,17 +85,18 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
         Session session = null;
         TransactionCategory transactionCategory = null;
         try {
-            List<TransactionCategory> transactionCategories = this.getAllTransactionCategories();
             session = SESSION_FACTORY.getCurrentSession();
             session.beginTransaction();
-            for (TransactionCategory transactionCategoryCheck : transactionCategories) {
-                if (userId == transactionCategoryCheck.getUser().getId() && category.equals(transactionCategoryCheck.getCategory())) {
-                    transactionCategory = transactionCategoryCheck;
-                    break;
-                }
-            }
-            System.out.println("Method getTransactionCategoryByCategory()");
+
+            Query<TransactionCategory> query = session.createQuery("from TransactionCategory " +
+                    "where user_id =: userId and category =: category");
+            query.setParameter("userId", userId);
+            query.setParameter("category", category);
+
+            transactionCategory = query.uniqueResult();
             System.out.println(transactionCategory);
+
+            System.out.println("Method getTransactionCategoryByCategory()");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());

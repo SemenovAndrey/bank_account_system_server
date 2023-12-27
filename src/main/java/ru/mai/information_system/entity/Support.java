@@ -14,18 +14,22 @@ public class Support {
     private String email;
     @Column(name = "message")
     private String message;
+    @Column(name = "is_processed")
+    private boolean isProcessed;
 
     public Support() {}
 
     public Support(String email, String message) {
         this.email = email;
         this.message = message;
+        this.isProcessed = false;
     }
 
-    public Support(int id, String email, String message) {
+    public Support(int id, String email, String message, boolean isProcessed) {
         this.id = id;
         this.email = email;
         this.message = message;
+        this.isProcessed = isProcessed;
     }
 
     public int getId() {
@@ -52,12 +56,21 @@ public class Support {
         this.message = message;
     }
 
+    public boolean isProcessed() {
+        return isProcessed;
+    }
+
+    public void setProcessed(boolean processed) {
+        isProcessed = processed;
+    }
+
     @Override
     public String toString() {
         return "Support{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", message='" + message + '\'' +
+                ", isProcessed=" + isProcessed +
                 '}';
     }
 }
