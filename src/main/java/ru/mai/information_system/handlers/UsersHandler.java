@@ -30,12 +30,15 @@ public class UsersHandler implements HttpHandler {
         } else if (path.startsWith(localPath + "/") && path.split("/").length == 3
                 && exchange.getRequestMethod().equals("GET")) {
             handleGetUserById(exchange, path.split("/")[2]);
-        } else if (path.startsWith(localPath + "/email") && path.split("/").length == 4
+        } else if (path.startsWith(localPath + "/idByEmail") && path.split("/").length == 4
                 && exchange.getRequestMethod().equals("GET")) {
-            handleGetUserByEmail(exchange, path.split("/")[3]);
+            handleGetUserIdByEmail(exchange, path.split("/")[3]);
+        } else if (path.startsWith(localPath + "/nameById") && path.split("/").length == 4
+                && exchange.getRequestMethod().equals("GET")) {
+            handleGetUserNameById(exchange, path.split("/")[3]);
         } else if (path.equals(localPath + "/auth") && exchange.getRequestMethod().equals("POST")) {
             handleUserAuth(exchange);
-        } else if (path.equals(localPath + "/register") && exchange.getRequestMethod().equals("POST")) {
+        } else if (path.equals(localPath + "/reg") && exchange.getRequestMethod().equals("POST")) {
             handleUserRegister(exchange);
         } else if (path.equals(localPath) && exchange.getRequestMethod().equals("PUT")) {
             handleUpdateUser(exchange);
@@ -72,12 +75,26 @@ public class UsersHandler implements HttpHandler {
         sendResponse(exchange, response);
     }
 
-    private void handleGetUserByEmail(HttpExchange exchange, String email) {
+    private void handleGetUserNameById(HttpExchange exchange, String userId) {
+        int id = Integer.parseInt(userId);
+        User user = USER_SERVICE.getUserById(id);
+
+        String response;
+        if (user != null) {
+            response = user.getName();
+        } else {
+            response = "User not found";
+        }
+
+        sendResponse(exchange, response);
+    }
+
+    private void handleGetUserIdByEmail(HttpExchange exchange, String email) {
         User user = USER_SERVICE.getUserByEmail(email);
 
         String response;
         if (user != null) {
-            response = user.toString();
+            response = user.getId() + "";
         } else {
             response = "User not found";
         }
