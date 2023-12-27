@@ -26,6 +26,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
             for (BankAccount bankAccount : bankAccounts) {
                 System.out.println(bankAccount);
             }
+            System.out.println();
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -45,7 +46,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
             session.beginTransaction();
             bankAccount = session.get(BankAccount.class, id);
             System.out.println("Method getBankAccountById()");
-            System.out.println(bankAccount);
+            System.out.println(bankAccount + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -68,7 +69,8 @@ public class BankAccountDAOImpl implements BankAccountDAO {
             bankAccounts = session.createQuery("from BankAccount " +
                     "where user_id =: userId").setParameter("userId", userId)
                     .getResultList();
-            System.out.println(bankAccounts);
+            System.out.println("Method getBankAccountByUserId()");
+            System.out.println(bankAccounts + "\n");
 
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -95,7 +97,8 @@ public class BankAccountDAOImpl implements BankAccountDAO {
             query.setParameter("name", bankAccountName);
 
             bankAccount = query.uniqueResult();
-            System.out.println(bankAccount);
+            System.out.println("Method getBankAccountByUserIdAndName()");
+            System.out.println(bankAccount + "\n");
 
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -115,7 +118,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
             session.beginTransaction();
             session.saveOrUpdate(bankAccount);
             System.out.println("Method saveBankAccount()");
-            System.out.println(bankAccount);
+            System.out.println(bankAccount + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -131,8 +134,8 @@ public class BankAccountDAOImpl implements BankAccountDAO {
         try {
             session.beginTransaction();
             BankAccount bankAccount = session.get(BankAccount.class, id);
-            System.out.println("Method deleteBankAccountById()");
             session.delete(bankAccount);
+            System.out.println("Method deleteBankAccountById()");
             System.out.println(bankAccount);
             session.getTransaction().commit();
         } catch (Exception e) {

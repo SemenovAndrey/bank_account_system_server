@@ -25,6 +25,7 @@ public class UserDAOImpl implements UserDAO {
             for (User user : users) {
                 System.out.println(user);
             }
+            System.out.println();
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -44,7 +45,7 @@ public class UserDAOImpl implements UserDAO {
             session.beginTransaction();
             user = session.get(User.class, id);
             System.out.println("Method getUserById()");
-            System.out.println(user);
+            System.out.println(user + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -66,7 +67,7 @@ public class UserDAOImpl implements UserDAO {
 
             user = session.createQuery("from User where email =: email", User.class)
                     .setParameter("email", email).getSingleResult();
-            System.out.println(user);
+            System.out.println(user + "\n");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
@@ -85,7 +86,7 @@ public class UserDAOImpl implements UserDAO {
             session.beginTransaction();
             session.saveOrUpdate(user);
             System.out.println("Method saveUser()");
-            System.out.println(user);
+            System.out.println(user + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -103,7 +104,7 @@ public class UserDAOImpl implements UserDAO {
             User user = session.get(User.class, id);
             System.out.println("Method deleteUser()");
             session.delete(user);
-            System.out.println(user);
+            System.out.println(user + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());

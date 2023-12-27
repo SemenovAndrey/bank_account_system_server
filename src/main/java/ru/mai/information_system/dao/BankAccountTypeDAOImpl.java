@@ -25,6 +25,7 @@ public class BankAccountTypeDAOImpl implements BankAccountTypeDAO {
             for (BankAccountType bankAccountType : bankAccountTypes) {
                 System.out.println(bankAccountType);
             }
+            System.out.println();
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -44,7 +45,7 @@ public class BankAccountTypeDAOImpl implements BankAccountTypeDAO {
             session.beginTransaction();
             bankAccountType = session.get(BankAccountType.class, id);
             System.out.println("Method getBankAccountTypeById()");
-            System.out.println(bankAccountType);
+            System.out.println(bankAccountType + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -63,7 +64,7 @@ public class BankAccountTypeDAOImpl implements BankAccountTypeDAO {
             session.beginTransaction();
             session.saveOrUpdate(bankAccountType);
             System.out.println("Method saveBankAccountType()");
-            System.out.println(bankAccountType);
+            System.out.println(bankAccountType + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -81,7 +82,7 @@ public class BankAccountTypeDAOImpl implements BankAccountTypeDAO {
             BankAccountType bankAccountType = session.get(BankAccountType.class, id);
             System.out.println("Method deleteBankAccountTypeById()");
             session.delete(bankAccountType);
-            System.out.println(bankAccountType);
+            System.out.println(bankAccountType + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());

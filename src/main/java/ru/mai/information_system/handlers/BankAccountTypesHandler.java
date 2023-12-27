@@ -29,7 +29,7 @@ public class BankAccountTypesHandler implements HttpHandler {
             try {
                 exchange.sendResponseHeaders(404, 0);
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                System.out.println(e.getMessage() + "\n");
             }
             exchange.close();
         }

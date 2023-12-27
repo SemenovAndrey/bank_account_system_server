@@ -25,6 +25,7 @@ public class TransactionDAOImpl implements TransactionDAO {
             for (Transaction user : transactions) {
                 System.out.println(user);
             }
+            System.out.println();
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -44,7 +45,7 @@ public class TransactionDAOImpl implements TransactionDAO {
             session.beginTransaction();
             transaction = session.get(Transaction.class, id);
             System.out.println("Method getTransactionById()");
-            System.out.println(transaction);
+            System.out.println(transaction + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -68,7 +69,7 @@ public class TransactionDAOImpl implements TransactionDAO {
                             "where bank_account_id =: bankAccountId")
                     .setParameter("bankAccountId", bankAccountId)
                     .getResultList();
-            System.out.println(transactions);
+            System.out.println(transactions + "\n");
 
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -88,7 +89,7 @@ public class TransactionDAOImpl implements TransactionDAO {
             session.beginTransaction();
             session.saveOrUpdate(transaction);
             System.out.println("Method saveTransaction()");
-            System.out.println(transaction);
+            System.out.println(transaction + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -106,7 +107,7 @@ public class TransactionDAOImpl implements TransactionDAO {
             Transaction transaction = session.get(Transaction.class, id);
             System.out.println("Method deleteTransaction()");
             session.delete(transaction);
-            System.out.println(transaction);
+            System.out.println(transaction + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());

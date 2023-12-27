@@ -25,6 +25,7 @@ public class TransactionByDateDAOImpl implements TransactionByDateDAO {
             for (TransactionByDate transactionByDate : transactionByDateList) {
                 System.out.println(transactionByDate);
             }
+            System.out.println();
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -44,7 +45,7 @@ public class TransactionByDateDAOImpl implements TransactionByDateDAO {
             session.beginTransaction();
             transactionByDate = session.get(TransactionByDate.class, id);
             System.out.println("Method getTransactionByDateById()");
-            System.out.println(transactionByDate);
+            System.out.println(transactionByDate + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -68,7 +69,7 @@ public class TransactionByDateDAOImpl implements TransactionByDateDAO {
                     "where bank_account_id =: bankAccountId")
                     .setParameter("bankAccountId", bankAccountId)
                     .getResultList();
-            System.out.println(transactionsByDate);
+            System.out.println(transactionsByDate + "\n");
 
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -88,7 +89,7 @@ public class TransactionByDateDAOImpl implements TransactionByDateDAO {
             session.beginTransaction();
             session.saveOrUpdate(transactionByDate);
             System.out.println("Method saveTransactionByDate()");
-            System.out.println(transactionByDate);
+            System.out.println(transactionByDate + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -106,7 +107,7 @@ public class TransactionByDateDAOImpl implements TransactionByDateDAO {
             TransactionByDate transactionByDate = session.get(TransactionByDate.class, id);
             System.out.println("Method deleteTransactionByDateById()");
             session.delete(transactionByDate);
-            System.out.println(transactionByDate);
+            System.out.println(transactionByDate + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());

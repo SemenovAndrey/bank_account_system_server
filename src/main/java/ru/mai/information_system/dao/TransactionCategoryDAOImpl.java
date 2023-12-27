@@ -26,6 +26,7 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
             for (TransactionCategory transactionCategory : transactionCategoryList) {
                 System.out.println(transactionCategory);
             }
+            System.out.println();
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -45,7 +46,7 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
             session.beginTransaction();
             transactionCategory = session.get(TransactionCategory.class, id);
             System.out.println("Method getTransactionCategoryById()");
-            System.out.println(transactionCategory);
+            System.out.println(transactionCategory + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -68,7 +69,7 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
             transactionCategories = session.createQuery("from TransactionCategory " +
                     "where user_id =: userId").setParameter("userId", userId)
                     .getResultList();
-            System.out.println(transactionCategories);
+            System.out.println(transactionCategories + "\n");
 
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -94,7 +95,7 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
             query.setParameter("category", category);
 
             transactionCategory = query.uniqueResult();
-            System.out.println(transactionCategory);
+            System.out.println(transactionCategory + "\n");
 
             System.out.println("Method getTransactionCategoryByCategory()");
             session.getTransaction().commit();
@@ -115,7 +116,7 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
             session.beginTransaction();
             session.saveOrUpdate(transactionCategory);
             System.out.println("Method saveTransactionCategory()");
-            System.out.println(transactionCategory);
+            System.out.println(transactionCategory + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -133,7 +134,7 @@ public class TransactionCategoryDAOImpl implements TransactionCategoryDAO {
             TransactionCategory transactionCategory = session.get(TransactionCategory.class, id);
             System.out.println("Method deleteTransactionCategory()");
             session.delete(transactionCategory);
-            System.out.println(transactionCategory);
+            System.out.println(transactionCategory + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());

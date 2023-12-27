@@ -25,6 +25,7 @@ public class SupportDAOImpl implements SupportDAO {
             for (Support support : supports) {
                 System.out.println(support);
             }
+            System.out.println();
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -44,7 +45,7 @@ public class SupportDAOImpl implements SupportDAO {
             session.beginTransaction();
             support = session.get(Support.class, id);
             System.out.println("Method getSupportById()");
-            System.out.println(support);
+            System.out.println(support + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -63,7 +64,7 @@ public class SupportDAOImpl implements SupportDAO {
             session.beginTransaction();
             session.saveOrUpdate(support);
             System.out.println("Method saveSupport()");
-            System.out.println(support);
+            System.out.println(support + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -81,7 +82,7 @@ public class SupportDAOImpl implements SupportDAO {
             Support support = session.get(Support.class, id);
             System.out.println("Method deleteSupportById()");
             session.delete(support);
-            System.out.println(support);
+            System.out.println(support + "\n");
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
